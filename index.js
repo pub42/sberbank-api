@@ -1,8 +1,14 @@
-let userName;
-let password;
+const request = require('sync-request');
+
 const orderLink = "https://3dsec.sberbank.ru/payment/rest/register.do";
 
 module.exports = {
+    /**
+     * Function to initialize sberbank data in module
+     * @param userName
+     * @param password
+     * @returns {*}
+     */
     init: function (userName, password) {
         if (!userName)
             return {error: {message: 'Username is required!'}};
@@ -12,8 +18,14 @@ module.exports = {
         this.password = password;
     },
 
-    createOrder: function (orderNumber, amount, returnUrl, failUrl, currency, description, language, pageView, clientId,
-                           merchantLogin, jsonParams, sessionTimeout, expirationDate, bindingId, features) {
+    /**
+     * Look Sberbank API REST
+     * @param orderNumber
+     * @param amount
+     * @param returnUrl
+     * @returns {*}
+     */
+    createOrder: function (orderNumber, amount, returnUrl) {
         let params = {};
         params.userName = this.userName;
         params.password = this.password;
@@ -38,14 +50,20 @@ module.exports = {
                 params[e] = arguments[i + 3];
         });
 
-        sendRequest(orderLink, 'GET', params)
+        return sendRequest(orderLink, 'GET', params);
     }
 };
 
+/**
+ * Private method to to send requests
+ * @param url
+ * @param method
+ * @param params
+ */
 function sendRequest(url, method, params) {
     let link = url + '?';
 
-    for(let i in params) {
+    for (let i in params) {
         if (params.hasOwnProperty(i))
             link += i + '=' + params[i] + '&';
     }
@@ -53,10 +71,8 @@ function sendRequest(url, method, params) {
     if (params)
         link = link.substr(0, link.length - 1);
 
-    console.log(link);
+    // console.log(link);
 
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", url, false);
-    xmlHttp.send();
-    console.log(xmlHttp.responseText);
+    const response = request(method, link);
+    return response.body.toString();
 }
