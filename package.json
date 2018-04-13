@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pub42/sberbank-api#readme",
   "dependencies": {
+    "request": "^2.85.0",
     "sync-request": "^6.0.0"
   }
 }

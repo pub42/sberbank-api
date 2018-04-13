@@ -1,4 +1,4 @@
-const request = require('sync-request');
+const request = require('  request');
 
 const orderLink = "https://3dsec.sberbank.ru/payment/rest/register.do";
 
@@ -26,6 +26,9 @@ module.exports = {
      * @returns {*}
      */
     createOrder: function (orderNumber, amount, returnUrl) {
+        if (!this.password || !this.username)
+            return {error: {message: 'First initialize!'}};
+
         let params = {};
         params.userName = this.userName;
         params.password = this.password;
@@ -59,20 +62,22 @@ module.exports = {
  * @param url
  * @param method
  * @param params
+ * @returns {Promise<String>}
  */
 function sendRequest(url, method, params) {
-    let link = url + '?';
+    return new Promise(resolve => {
+        let link = url + '?';
 
-    for (let i in params) {
-        if (params.hasOwnProperty(i))
-            link += i + '=' + params[i] + '&';
-    }
+        for (let i in params) {
+            if (params.hasOwnProperty(i))
+                link += i + '=' + params[i] + '&';
+        }
 
-    if (params)
-        link = link.substr(0, link.length - 1);
+        if (params)
+            link = link.substr(0, link.length - 1);
 
-    // console.log(link);
-
-    const response = request(method, link);
-    return response.body.toString();
+        request(link, function (err, res, body) {
+            resolve(body.toString());
+        });
+    });
 }
