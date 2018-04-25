@@ -63,7 +63,7 @@ module.exports = {
      * @returns {*}
      */
     getOrderStatus: function (orderId) {
-        if (!this.password || !this.username)
+        if (!this.password || !this.userName)
             return {error: {message: 'First initialize!'}};
 
         if (!orderId)
