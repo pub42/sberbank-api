@@ -1,6 +1,7 @@
-const request = require('  request');
+const request = require('request');
 
 const orderLink = "https://3dsec.sberbank.ru/payment/rest/register.do";
+const statusLink = "https://3dsec.sberbank.ru/payment/rest/getOrderStatus.do";
 
 module.exports = {
     /**
@@ -26,7 +27,7 @@ module.exports = {
      * @returns {*}
      */
     createOrder: function (orderNumber, amount, returnUrl) {
-        if (!this.password || !this.username)
+        if (!this.password || !this.userName)
             return {error: {message: 'First initialize!'}};
 
         let params = {};
@@ -54,6 +55,25 @@ module.exports = {
         });
 
         return sendRequest(orderLink, 'GET', params);
+    },
+
+    /**
+     * Check order status by id
+     * @param orderId
+     * @returns {*}
+     */
+    getOrderStatus: function (orderId) {
+        if (!this.password || !this.username)
+            return {error: {message: 'First initialize!'}};
+
+        if (!orderId)
+            return {error: {message: 'Order id is required!'}};
+
+        let params = {};
+        params.userName = this.userName;
+        params.password = this.password;
+        params.orderId = orderId;
+        return sendRequest(statusLink, 'GET', params)
     }
 };
 
